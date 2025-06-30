@@ -1,0 +1,30 @@
+services:
+  pgrechner_app_0_5:
+    build: .
+    container_name: pgrechner_app_0_5
+    volumes:
+      - .:/app
+    env_file: .env
+    ports:
+      - "5001:5001"
+    depends_on:
+      - pgrechner_db_0_5
+    restart: unless-stopped
+
+  pgrechner_db_0_5:
+    image: postgres:15-alpine
+    container_name: pgrechner_db_0_5
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: pgrechner_0_5
+    volumes:
+      - pgrechner_db_data_0_5:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  pgrechner_db_data_0_5:
+
+    

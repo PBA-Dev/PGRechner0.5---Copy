@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+/Module1-6-images
+/dejavu-sans.zip
+NBA-Punkts.rtf
+# Ignore Python cache files
