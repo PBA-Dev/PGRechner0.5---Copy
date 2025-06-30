@@ -520,7 +520,7 @@
         }
 
 
-        document.addEventListener('DOMContentLoaded', function() {
+        function initProgressTracking() {
             // Attach event listeners to radio buttons
             document.querySelectorAll('input[type="radio"][name^="answer_"]').forEach(el => {
                 el.addEventListener('change', updateProgress);
@@ -533,7 +533,14 @@
             });
 
             updateProgress();
-        });
+                }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initProgressTracking);
+        } else {
+            initProgressTracking();
+        }
+
 
 
         // Optional: Add CSS for the .hidden class if not already defined

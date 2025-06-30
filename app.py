@@ -1416,6 +1416,16 @@ def child_module_page(module_id):
     module_data = all_child_modules[module_id]
     module_id_str = str(module_id)
 
+    # Determine the age group from the stored age in months
+    age_in_months = session.get("age_in_months", 0)
+    if age_in_months <= 18:
+        age_group = "0-18"
+    elif age_in_months <= 132:
+        age_group = "18-132"
+    else:
+        age_group = "132-216"
+
+
     current_answers = session.get("module_answers", {}).get(module_id_str, {})
 
     current_estimated_score = 0.0
@@ -1476,6 +1486,7 @@ def child_module_page(module_id):
         CHILD_DEVELOPMENT_DATA=CHILD_DEVELOPMENT_DATA,
         CHILD_SCORING_MATRIX=CHILD_SCORING_MATRIX,
         CHILD_MODULE4_SPECIAL_SCORING=CHILD_MODULE4_SPECIAL_SCORING,
+        all_child_modules=all_child_modules,
         age_group_label=get_age_group_label(session.get("age_in_months"))
     )
 
