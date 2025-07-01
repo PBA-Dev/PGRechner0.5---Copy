@@ -1970,29 +1970,32 @@ def generate_pdf():
         current_app.logger.info(
             f"Successfully parsed JSON data for PDF generation. Keys: {list(data.keys())}"
         )
+    except Exception as e:
+        current_app.logger.error(f"Exception during PDF JSON parsing: {e}")
+        return jsonify({"error": "An error occurred while processing the PDF data."}), 500
 
-       # --- Extract data safely ---
-        detailed_results = data.get("detailed_results", {})
-        final_total_score = float(data.get("final_total_score", 0.0))
-        pflegegrad = int(data.get("pflegegrad", 0))
-        benefits_data = data.get("benefits", {})
-        current_period_key = data.get("current_period_key")
-        notes_data = data.get("notes", {})  # Aggregated notes { '1': 'note', .. }
-        user_info = data.get("user_info") or {}
-        is_child_calculation = data.get("is_child_calculation", False)
-        modules_to_use = all_child_modules if is_child_calculation else all_modules
-        
-        benefits_periods = []
-        if isinstance(benefits_data, dict):
-            period_keys = [k for k in benefits_data if k.startswith("period_")]
-            if period_keys:
-                period_keys.sort(key=lambda k: int(k.split("_")[1]) if k.split("_")[1].isdigit() else 0)
-                for pk in period_keys:
-                    period_info = benefits_data.get(pk)
-                    if isinstance(period_info, dict):
-                        benefits_periods.append(period_info)
-            elif benefits_data.get("leistungen"):
-                benefits_periods.append(benefits_data)
+    # --- Extract data safely ---
+    detailed_results = data.get("detailed_results", {})
+    final_total_score = float(data.get("final_total_score", 0.0))
+    pflegegrad = int(data.get("pflegegrad", 0))
+    benefits_data = data.get("benefits", {})
+    current_period_key = data.get("current_period_key")
+    notes_data = data.get("notes", {})  # Aggregated notes { '1': 'note', .. }
+    user_info = data.get("user_info") or {}
+    is_child_calculation = data.get("is_child_calculation", False)
+    modules_to_use = all_child_modules if is_child_calculation else all_modules
+    
+    benefits_periods = []
+    if isinstance(benefits_data, dict):
+        period_keys = [k for k in benefits_data if k.startswith("period_")]
+        if period_keys:
+            period_keys.sort(key=lambda k: int(k.split("_")[1]) if k.split("_")[1].isdigit() else 0)
+            for pk in period_keys:
+                period_info = benefits_data.get(pk)
+                if isinstance(period_info, dict):
+                    benefits_periods.append(period_info)
+        elif benefits_data.get("leistungen"):
+            benefits_periods.append(benefits_data)
 
         # --- PDF Generation Logic ---
         logo_url = "opb-logo-neu.webp"
@@ -2004,7 +2007,6 @@ def generate_pdf():
         # Create PDF with client info for footer
         pdf = ReportPDF(client_name=client_name, insurance_number=insurance_number)
 
-       
         font_dir = os.path.join(os.path.dirname(__file__), "dejavu-sans", "ttf")
         pdf.add_font("DejaVu", "", os.path.join(font_dir, "DejaVuSans.ttf"), uni=True)
         pdf.add_font("DejaVu", "B", os.path.join(font_dir, "DejaVuSans-Bold.ttf"), uni=True)
@@ -2037,7 +2039,7 @@ def generate_pdf():
         if client_name:
             pdf.set_font("DejaVu", "", 12)
             date_str = datetime.now().strftime("%d.%m.%Y")
-            pdf.cell(usable_width, 8, f"für {client_name} am {date_str}", ln=1, align="C")
+            pdf.cell(usable_width, 8, f"f\xfcr {client_name} am {date_str}", ln=1, align="C")
 
 
         # --- Info Page ---

@@ -18,6 +18,7 @@ abgebildet.''',
             'options': [
                 {
                     'text': 'Selbständig',
+                    'score': 0,
                     'option_explanation': (
                         'Das Kind ist auch selbständig, wenn es seine Position unter Nutzung von Hilfsmitteln, '
                         'zum Beispiel Aufrichter, Bettseitenteil, Strickleiter, elektrisch verstellbares Bett, '
@@ -26,6 +27,7 @@ abgebildet.''',
                 },
                 {
                     'text': 'Überwiegend selbständig',
+                    'score': 1,
                     'option_explanation': (
                         'Das Kind kann beispielsweise nach Anreichen eines Hilfsmittels oder Reichen der Hand '
                         'seine Lage im Bett verändern.'
@@ -33,6 +35,7 @@ abgebildet.''',
                 },
                 {
                     'text': 'Überwiegend unselbständig',
+                    'score': 2,
                     'option_explanation': (
                         'Das Kind kann beim Positionswechsel nur wenig mithelfen, zum Beispiel auf den Rücken '
                         'rollen, am Bettgestell festhalten oder zum Lagern die Arme vor der Brust verschränken '
@@ -41,6 +44,7 @@ abgebildet.''',
                 },
                 {
                     'text': 'Unselbständig',
+                    'score': 3,
                     'option_explanation': (
                         'Das Kind kann sich beim Positionswechsel nicht oder nur minimal beteiligen.'
                     )
@@ -54,6 +58,7 @@ abgebildet.''',
             'options': [
                 {
                     'text': 'Selbständig',
+                    'score': 0,
                     'option_explanation': (
                         'Das Kind ist auch dann selbständig, wenn es beim Sitzen gelegentlich seine '
                         'Sitzposition korrigieren muss.'
@@ -61,6 +66,7 @@ abgebildet.''',
                 },
                 {
                     'text': 'Überwiegend selbständig',
+                    'score': 1,
                     'option_explanation': (
                         '''Die Person kann sich nur kurz, zum Beispiel für die Dauer einer Mahlzeit oder
 eines Waschvorgangs selbständig in der Sitzposition halten, darüber hinaus
@@ -69,6 +75,7 @@ benötigt sie aber personelle Unterstützung zur Positionskorrektur.'''
                 },
                 {
                     'text': 'Überwiegend unselbständig',
+                    'score': 2,
                     'option_explanation': (
                         '''Das Kind kann sich wegen eingeschränkter Rumpfkontrolle auch mit Rücken-
 und Seitenstütze nicht in aufrechter Position halten und benötigt auch während
@@ -78,6 +85,7 @@ zur Positionskorrektur.'''
                 },
                 {
                     'text': 'Unselbständig',
+                    'score': 3,
                     'option_explanation': (
                         '''Das Kind kann sich nicht in Sitzposition halten. Bei fehlender Rumpf- und Kopf-
 kontrolle kann das Kind nur im Bett oder Lagerungsstuhl liegend gelagert werden.'''
@@ -92,6 +100,7 @@ kontrolle kann das Kind nur im Bett oder Lagerungsstuhl liegend gelagert werden.
             'options': [
                 {
                     'text': 'Selbständig',
+                    'score': 0,
                     'option_explanation': (
                         '''Das Kind ist auch dann selbständig, wenn es keine Personenhilfe benötigt, aber
 ein Hilfsmittel oder einen anderen Gegenstand zum Festhalten oder Hochziehen
@@ -103,6 +112,7 @@ stehen kann, aber sich mit Armkraft ohne personelle Hilfe umsetzen kann
                 },
                 {
                     'text': 'Überwiegend selbständig',
+                    'score': 1,
                     'option_explanation': (
                         '''Das Kind kann aus eigener Kraft aufstehen oder sich umsetzen, wenn es eine
 Hand oder einen Arm gereicht bekommt.'''
@@ -110,6 +120,7 @@ Hand oder einen Arm gereicht bekommt.'''
                 },
                 {
                     'text': 'Überwiegend unselbständig',
+                    'score': 2,
                     'option_explanation': (
                         '''Die Eltern müssen beim Aufstehen, Umsetzen (erheblichen) Kraftaufwand auf-
 bringen (hochziehen, halten, stützen, heben). Das Kind hilft jedoch in geringem
@@ -118,6 +129,7 @@ Maße mit, kann zum Beispiel kurzzeitig stehen.'''
                 },
                 {
                     'text': 'Unselbständig',
+                    'score': 3,
                     'option_explanation': (
                         '''Das Kind muss gehoben oder getragen werden, Mithilfe ist nicht möglich.'''
                     )
@@ -136,6 +148,7 @@ Punkt KF 4.2.2 beziehungsweise Punkt KF 4.1.5 zu berücksichtigen.''',
              'options': [
                 {
                     'text': 'Selbständig',
+                    'score': 0,
                     'option_explanation': (
                         '''Das Kind kann sich ohne Hilfe durch andere Personen fortbewegen. Das kann gege-
 benenfalls unter Nutzung von Hilfsmitteln, zum Beispiel Unterarmgehstützen, Rol-
@@ -144,6 +157,7 @@ lator, Rollstuhl oder sonstiger Gegenstände, zum Beispiel Möbelstück, gescheh
                 },
                 {
                     'text': 'Überwiegend selbständig',
+                    'score': 1,
                     'option_explanation': (
                         '''Das Kind kann die Aktivität überwiegend selbständig durchführen. Personelle
 Hilfe ist beispielsweise erforderlich im Sinne von Bereitstellen von Hilfsmitteln
@@ -153,6 +167,7 @@ haken oder Beobachtung (Anwesenheit aus Sicherheitsgründen).'''
                 },
                 {
                     'text': 'Überwiegend unselbständig',
+                    'score': 2,
                     'option_explanation': (
                         '''Das Kind kann nur wenige Schritte gehen oder sich mit dem Rollstuhl nur wenige
 Meter fortbewegen oder kann nur mit Stützung oder Festhalten der Eltern gehen.
@@ -163,6 +178,7 @@ unselbständig“.'''
                 },
                 {
                     'text': 'Unselbständig',
+                    'score': 3,
                     'option_explanation': (
                         '''Das Kind muss getragen oder vollständig im Rollstuhl geschoben werden.'''
                     )
@@ -176,6 +192,7 @@ unselbständig“.'''
             'options': [
                 {
                     'text': 'Selbständig',
+                    'score': 0,
                     'option_explanation': (
                     '''Das Kind kann ohne Hilfe durch andere Personen in aufrechter Position eine
 Treppe steigen.'''
@@ -183,6 +200,7 @@ Treppe steigen.'''
                 },
                 {
                     'text': 'Überwiegend selbständig',
+                    'score': 1,
                     'option_explanation': (
                         '''Das Kind kann eine Treppe alleine steigen, benötigt aber Begleitung wegen
 eines Sturzrisikos (Anwesenheit aus Sicherheitsgründen).'''
@@ -190,6 +208,7 @@ eines Sturzrisikos (Anwesenheit aus Sicherheitsgründen).'''
                 },
                 {
                     'text': 'Überwiegend unselbständig',
+                    'score': 2,
                     'option_explanation': (
                         '''Treppensteigen ist nur mit Stützen oder Festhalten des Kindes möglich. Die aus-
 schließliche Fähigkeit zur Überwindung von Stufen durch Krabbeln oder Robben
@@ -198,6 +217,7 @@ ist generell als „überwiegend unselbständig“ zu bewerten.'''
                 },
                 {
                     'text': 'Unselbständig',
+                    'score': 3,
                     'option_explanation': (
                         '''Das Kind muss getragen oder mit Hilfsmitteln transportiert werden, keine Eigen-
 beteiligung.'''
@@ -215,10 +235,12 @@ mitteln kompensiert werden''',
             'options': [
                 {
                     'text': 'Nein',
+                    'score': 0,
                     'option_explanation': 'Trifft nicht zu.'
                 },
                 {
                     'text': 'Ja',
+                    'score': 90,
                     'option_explanation': (
                         '''Das Kriterium erfasst in der Regel Kinder mit einer Bewegungsunfähigkeit beider
 Arme und beider Beine unabhängig von der Ursache. Gebrauchsunfähigkeit bei-

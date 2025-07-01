@@ -12,10 +12,10 @@ child_module6 = {
 bewusst gestalten und gegebenenfalls die Planung an äußere Veränderungen
 anpassen.''',
             'options': [
-                {'text': 'Selbständig'},
-                {'text': 'Überwiegend selbständig'},
-                {'text': 'Überwiegend unselbständig'},
-                {'text': 'Unselbständig'}
+                {'text': 'Selbständig', 'score': 0},
+                {'text': 'Überwiegend selbständig', 'score': 1},
+                {'text': 'Überwiegend unselbständig', 'score': 2},
+                {'text': 'Unselbständig', 'score': 3}
             ]
         },
         {
@@ -24,10 +24,10 @@ anpassen.''',
             'explanation': '''Nach individuellen Gewohnheiten einen Tag-Nacht-Rhythmus einhalten und für
 ausreichende Ruhe- und Schlafphasen sorgen.''',
             'options': [
-                {'text': 'Selbständig'},
-                {'text': 'Überwiegend selbständig'},
-                {'text': 'Überwiegend unselbständig'},
-                {'text': 'Unselbständig'}
+                {'text': 'Selbständig', 'score': 0},
+                {'text': 'Überwiegend selbständig', 'score': 1},
+                {'text': 'Überwiegend unselbständig', 'score': 2},
+                {'text': 'Unselbständig', 'score': 3}
             ]
         },
         {
@@ -36,10 +36,10 @@ ausreichende Ruhe- und Schlafphasen sorgen.''',
             'explanation': '''Die verfügbare Zeit nutzen, um Aktivitäten durchzuführen, die den eigenen
 Vorlieben und Interessen entsprechen.''',
             'options': [
-                {'text': 'Selbständig'},
-                {'text': 'Überwiegend selbständig'},
-                {'text': 'Überwiegend unselbständig'},
-                {'text': 'Unselbständig'}
+                {'text': 'Selbständig', 'score': 0},
+                {'text': 'Überwiegend selbständig', 'score': 1},
+                {'text': 'Überwiegend unselbständig', 'score': 2},
+                {'text': 'Unselbständig', 'score': 3}
             ]
         },
         {
@@ -47,10 +47,10 @@ Vorlieben und Interessen entsprechen.''',
             'text': 'Vornehmen von in die Zukunft gerichteten Planungen',
             'explanation': '''Längere Zeitabschnitte überschauend über den Tag hinausplanen.''',
             'options': [
-                {'text': 'Selbständig'},
-                {'text': 'Überwiegend selbständig'},
-                {'text': 'Überwiegend unselbständig'},
-                {'text': 'Unselbständig'}
+                {'text': 'Selbständig', 'score': 0},
+                {'text': 'Überwiegend selbständig', 'score': 1},
+                {'text': 'Überwiegend unselbständig', 'score': 2},
+                {'text': 'Unselbständig', 'score': 3}
             ]
         },
         {
@@ -60,10 +60,10 @@ Vorlieben und Interessen entsprechen.''',
 Besuchern umgehen, Kontakt aufnehmen, Personen ansprechen, auf Ansprache
 reagieren.''',
             'options': [
-                {'text': 'Selbständig'},
-                {'text': 'Überwiegend selbständig'},
-                {'text': 'Überwiegend unselbständig'},
-                {'text': 'Unselbständig'}
+                {'text': 'Selbständig', 'score': 0},
+                {'text': 'Überwiegend selbständig', 'score': 1},
+                {'text': 'Überwiegend unselbständig', 'score': 2},
+                {'text': 'Unselbständig', 'score': 3}
             ]
         },
         {
@@ -72,10 +72,10 @@ reagieren.''',
             'explanation': '''Bestehende Kontakte zu Freunden, Bekannten, Nachbarn aufrechterhalten,
 beenden oder zeitweise ablehnen.''',
             'options': [
-                {'text': 'Selbständig'},
-                {'text': 'Überwiegend selbständig'},
-                {'text': 'Überwiegend unselbständig'},
-                {'text': 'Unselbständig'}
+                {'text': 'Selbständig', 'score': 0},
+                {'text': 'Überwiegend selbständig', 'score': 1},
+                {'text': 'Überwiegend unselbständig', 'score': 2},
+                {'text': 'Unselbständig', 'score': 3}
             ]
         }
     ]
