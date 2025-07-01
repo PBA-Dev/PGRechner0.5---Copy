@@ -20,11 +20,11 @@ DATABASE_URL=postgresql://postgres:postgres@pgrechner_db_test:5432/pgrechner
 
 ## Running with Docker Compose
 
-Install Docker and Docker Compose, then build and start the containers using the external main vps
-`docker-compose.yml` :
+Install Docker and Docker Compose, then build and start the containers using the included
+`docker-compose.yml`:
 
 ```bash
-docker-compose up --build /root/n8n/docker-compose.yml
+docker-compose up --build
 ```
 
 This starts three services:
@@ -63,6 +63,7 @@ The admin account grants access to routes such as `/admin`.
 - Dependencies such as `gunicorn` and `psycopg2-binary` are installed from `requirements.txt`.
 - Database files persist in the named `pgrechner_db_data_test` volume between container restarts.
 - The production VPS is reachable at `194.5.159.108` . Open [http://opbrechner.optimum-pflegeberatung.de](http://opbrechner.optimum-pflegeberatung.de) to access the application.
+- The Flask entry point is `app.py`. The previously included `app_temp.py` backup has been removed.
 
 ## Data files
 

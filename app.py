@@ -46,7 +46,6 @@ from flask_login import (
     login_required,
     current_user,
 )
-from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from flask_mail import Mail, Message
@@ -62,7 +61,6 @@ load_dotenv(dotenv_path=".env")
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SESSION_TYPE'] = 'filesystem'
 
 # Configure Flask-Mail from environment variables
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
@@ -86,8 +84,7 @@ mail = Mail(app)
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
 
-# Initialize server-side sessions
-Session(app)
+
 
 
 @app.template_filter("eu_date")
