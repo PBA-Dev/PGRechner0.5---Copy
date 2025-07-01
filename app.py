@@ -17,7 +17,7 @@ from flask import (
     current_app,
     jsonify,
 )
-from flask_session import Session # Import the Session extension
+from flask_session import Session  # Import the Session extension
 from datetime import datetime, date
 from fpdf import FPDF
 from fpdf.enums import XPos, YPos
@@ -35,8 +35,16 @@ from modules.child_module5 import child_module5
 from modules.child_module6 import child_module6
 from config.pflegegrad_config import pflegegrad_thresholds
 from config.benefits_data import pflegegrad_benefits
-from config.child_development_data import CHILD_DEVELOPMENT_DATA, CHILD_SCORING_MATRIX, CHILD_MODULE4_SPECIAL_SCORING, KF_4_4_0_POINTS
-from config.pg_calculator import calculate_child_pflegerad, calculate_and_determine_pflegegrad
+from config.child_development_data import (
+    CHILD_DEVELOPMENT_DATA,
+    CHILD_SCORING_MATRIX,
+    CHILD_MODULE4_SPECIAL_SCORING,
+    KF_4_4_0_POINTS,
+)
+from config.pg_calculator import (
+    calculate_child_pflegerad,
+    calculate_and_determine_pflegegrad,
+)
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import (
     LoginManager,
@@ -58,23 +66,27 @@ app = Flask(__name__)
 load_dotenv(dotenv_path=".env")
 
 # Set secret key and database URI from environment variables
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Configure Flask-Mail from environment variables
-app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
-app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
-app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'true').lower() in ['true', '1', 't']
-app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
-app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER')
+app.config["MAIL_SERVER"] = os.getenv("MAIL_SERVER")
+app.config["MAIL_PORT"] = int(os.getenv("MAIL_PORT", 587))
+app.config["MAIL_USE_TLS"] = os.getenv("MAIL_USE_TLS", "true").lower() in [
+    "true",
+    "1",
+    "t",
+]
+app.config["MAIL_USERNAME"] = os.getenv("MAIL_USERNAME")
+app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
+app.config["MAIL_DEFAULT_SENDER"] = os.getenv("MAIL_DEFAULT_SENDER")
 
 # Configure server-side sessions
-app.config['SESSION_TYPE'] = 'filesystem'
-app.config['SESSION_PERMANENT'] = False
-app.config['SESSION_USE_SIGNER'] = True
-app.config['SESSION_FILE_DIR'] = './.flask_session/'
+app.config["SESSION_TYPE"] = "filesystem"
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_USE_SIGNER"] = True
+app.config["SESSION_FILE_DIR"] = "./.flask_session/"
 Session(app)
 
 db = SQLAlchemy(app)
@@ -83,8 +95,6 @@ mail = Mail(app)
 
 login_manager = LoginManager(app)
 login_manager.login_view = "login"
-
-
 
 
 @app.template_filter("eu_date")
@@ -99,10 +109,9 @@ def format_eu_date(date_str):
     return dt.strftime("%d.%m.%Y %H:%M:%S")
 
 
-
 class ReportPDF(FPDF):
     """Custom PDF class with header and footer for Optimum Pflegeberatung."""
-    
+
     def __init__(self, client_name=None, insurance_number=None):
         super().__init__()  # Call parent FPDF.__init__()
         self.client_name = client_name or ""
@@ -111,39 +120,39 @@ class ReportPDF(FPDF):
     def header(self):
         """Draw logo and company name on each page."""
         logo_url = "https://pflegeberatung-allstars.de/wp-content/uploads/2025/06/opb-logo-neu.jpg"
-        
+
         try:
             self.image(logo_url, x=10, y=8, h=10)
         except Exception:
             pass
         self.set_font("Helvetica", "B", 12)
-        #self.cell(0, 10, "Optimum Pflegeberatung", align="R")        
+        # self.cell(0, 10, "Optimum Pflegeberatung", align="R")
         self.ln(15)
-    
+
     def footer(self):
         """Draw footer with client name and insurance number."""
         # Position at 15mm from bottom
         self.set_y(-15)
-        
+
         # Set font for footer
         self.set_font("DejaVu", "", 9)
-        
+
         # Create footer text
         footer_parts = []
         if self.client_name:
             footer_parts.append(f"Klient/in: {self.client_name}")
         if self.insurance_number:
             footer_parts.append(f"VR#: {self.insurance_number}")
-        
+
         footer_text = " | ".join(footer_parts) if footer_parts else ""
-        
+
         # Add page number
         page_text = f"Seite {self.page_no()}"
-        
+
         # Left-aligned client info
         if footer_text:
             self.cell(0, 10, footer_text, 0, 0, "L")
-        
+
         # Right-aligned page number
         self.cell(0, 10, page_text, 0, 0, "R")
 
@@ -172,9 +181,6 @@ all_child_modules = {
 TOTAL_MODULES = len(all_modules)
 
 
-
-
-
 def save_calculation(entry):
     """Saves a calculation entry to the database."""
     new_calculation = Calculation(
@@ -186,7 +192,6 @@ def save_calculation(entry):
     )
     db.session.add(new_calculation)
     db.session.commit()
-
 
 weighted_score_mapping_tables = {
     # Module 1: Mobilität
@@ -660,7 +665,7 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-        # Send confirmation email
+         # Send confirmation email
         try:
             token = new_user.get_reset_token()  # Re-using reset token for confirmation
             msg = Message(
@@ -680,47 +685,65 @@ Mit freundlichen Grüßen,
 Ihr Team
 """
             mail.send(msg)
-            flash("Ein Bestätigungslink wurde an Ihre E-Mail-Adresse gesendet. Bitte überprüfen Sie Ihren Posteingang (und Spam-Ordner).", "info")
+            flash(
+                "Ein Bestätigungslink wurde an Ihre E-Mail-Adresse gesendet. Bitte überprüfen Sie Ihren Posteingang (und Spam-Ordner).",
+                "info",
+            )
         except Exception as e:
             app.logger.error(f"Error sending confirmation email: {e}")
-            flash("Registrierung erfolgreich, aber die Bestätigungs-E-Mail konnte nicht gesendet werden. Bitte kontaktieren Sie den Support.", "warning")
+            flash(
+                "Registrierung erfolgreich, aber die Bestätigungs-E-Mail konnte nicht gesendet werden. Bitte kontaktieren Sie den Support.",
+                "warning",
+            )
 
         return redirect(url_for("login"))
 
     return render_template("register.html", form=form)
 
 
-@app.route('/confirm/<token>')
+@app.route("/confirm/<token>")
 def confirm_email(token):
     try:
         user = User.verify_reset_token(token)
         if user is None:
-            flash('Der Bestätigungslink ist ungültig oder abgelaufen.', 'danger')
-            return redirect(url_for('register'))
+            flash("Der Bestätigungslink ist ungültig oder abgelaufen.", "danger")
+            return redirect(url_for("register"))
         if user.is_confirmed:
-            flash('Ihre E-Mail-Adresse ist bereits bestätigt. Bitte melden Sie sich an.', 'success')
+            flash(
+                "Ihre E-Mail-Adresse ist bereits bestätigt. Bitte melden Sie sich an.",
+                "success",
+            )
         else:
             user.is_confirmed = True
             user.confirmed_on = datetime.now()
             db.session.commit()
-            flash('Ihre E-Mail-Adresse wurde erfolgreich bestätigt! Sie können sich jetzt anmelden.', 'success')
+            flash(
+                "Ihre E-Mail-Adresse wurde erfolgreich bestätigt! Sie können sich jetzt anmelden.",
+                "success",
+            )
     except Exception as e:
         app.logger.error(f"Error confirming email: {e}")
-        flash('Ein Fehler ist bei der Bestätigung Ihrer E-Mail-Adresse aufgetreten.', 'danger')
-    return redirect(url_for('login'))
+        flash(
+            "Ein Fehler ist bei der Bestätigung Ihrer E-Mail-Adresse aufgetreten.",
+            "danger",
+        )
+    return redirect(url_for("login"))
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route("/login", methods=["GET", "POST"])
 def login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
         user = User.query.filter_by(username=username).first()
 
         if user and check_password_hash(user.password_hash, password):
             if not user.is_confirmed:
-                flash('Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse, bevor Sie sich anmelden.', 'warning')
-                return redirect(url_for('login'))
+                flash(
+                    "Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse, bevor Sie sich anmelden.",
+                    "warning",
+                )
+                return redirect(url_for("login"))
             login_user(user)
             flash("Anmeldung erfolgreich!", "success")
             if user.role == "admin":
@@ -730,48 +753,51 @@ def login():
         else:
             flash("Ungültiger Benutzername oder Passwort.", "danger")
 
-    return render_template('login.html')
+    return render_template("login.html")
 
 
-@app.route("/reset_password", methods=['GET', 'POST'])
+@app.route("/reset_password", methods=["GET", "POST"])
 def reset_request():
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for("dashboard"))
     form = ResetPasswordRequestForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user:
             send_reset_email(user)
-        flash('An email has been sent with instructions to reset your password.', 'info')
-        return redirect(url_for('login'))
-    return render_template('reset_request.html', title='Reset Password', form=form)
+        flash(
+            "An email has been sent with instructions to reset your password.", "info"
+        )
+        return redirect(url_for("login"))
+    return render_template("reset_request.html", title="Reset Password", form=form)
 
 
-@app.route("/reset_password/<token>", methods=['GET', 'POST'])
+@app.route("/reset_password/<token>", methods=["GET", "POST"])
 def reset_token(token):
     if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
+        return redirect(url_for("dashboard"))
     user = User.verify_reset_token(token)
     if user is None:
-        flash('That is an invalid or expired token', 'warning')
-        return redirect(url_for('reset_request'))
+        flash("That is an invalid or expired token", "warning")
+        return redirect(url_for("reset_request"))
     form = ResetPasswordForm()
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data)
         user.password_hash = hashed_password
         db.session.commit()
-        flash('Your password has been updated! You are now able to log in', 'success')
-        return redirect(url_for('login'))
-    return render_template('reset_token.html', title='Reset Password', form=form)
+        flash("Your password has been updated! You are now able to log in", "success")
+        return redirect(url_for("login"))
+    return render_template("reset_token.html", title="Reset Password", form=form)
 
 
 def get_age_group_label(age_in_months):
-    if age_in_months is None or age_in_months >= 216: # 18 years * 12 months
+    if age_in_months is None or age_in_months >= 216:  # 18 years * 12 months
         return "Erwachsenen"
-    elif age_in_months >= 132: # 11 years * 12 months
+    elif age_in_months >= 132:  # 11 years * 12 months
         return "Jugendlichen"
     else:
         return "Kinder"
+
 
 @app.route("/rechner")
 def rechner():
@@ -783,9 +809,6 @@ def rechner():
     return render_template("intro.html")
 
 
-
-
-
 @app.route("/dashboard")
 @login_required
 def dashboard():
@@ -793,7 +816,7 @@ def dashboard():
     if search_query:
         user_calculations = Calculation.query.filter(
             Calculation.user_id == current_user.id,
-            Calculation.klient_name.ilike(f"%{search_query}%")
+            Calculation.klient_name.ilike(f"%{search_query}%"),
         ).all()
     else:
         user_calculations = Calculation.query.filter_by(user_id=current_user.id).all()
@@ -802,6 +825,7 @@ def dashboard():
         calculations=user_calculations,
         search_query=search_query,
     )
+
 
 @app.route("/account/delete", methods=["POST"])
 @login_required
@@ -818,20 +842,6 @@ def delete_account():
 
 
 @app.route("/admin/user/delete/<int:user_id>", methods=["POST"])
-@login_required
-@admin_required
-def admin_delete_user(user_id):
-    user = User.query.get_or_404(user_id)
-    if user.id == current_user.id:
-        flash("Sie können Ihr eigenes Konto nicht löschen.", "danger")
-        return redirect(url_for("admin_dashboard"))
-    db.session.delete(user)
-    db.session.commit()
-    flash(f"Benutzer {user.username} wurde gelöscht.", "success")
-    return redirect(url_for("admin_dashboard"))
-
-
-@app.route("/admin/user/toggle_confirmation/<int:user_id>", methods=["POST"])
 @login_required
 @admin_required
 def admin_toggle_confirmation(user_id):
@@ -857,7 +867,9 @@ def admin_send_password_reset(user_id):
         flash(f"Passwort-Reset-E-Mail an {user.email} gesendet.", "success")
     except Exception as e:
         current_app.logger.error(f"Error sending password reset email from admin: {e}")
-        flash(f"Fehler beim Senden der Passwort-Reset-E-Mail an {user.email}.", "danger")
+        flash(
+            f"Fehler beim Senden der Passwort-Reset-E-Mail an {user.email}.", "danger"
+        )
     return redirect(url_for("admin_dashboard"))
 
 
@@ -876,18 +888,6 @@ def admin_change_role(user_id, new_role):
     db.session.commit()
     flash(f"Rolle von {user.username} zu {new_role} geändert.", "success")
     return redirect(url_for("admin_dashboard"))
-
-
-@app.route("/admin/calculation/delete/<int:calc_id>", methods=["POST"])
-@login_required
-@admin_required
-def admin_delete_calculation(calc_id):
-    calc = Calculation.query.get_or_404(calc_id)
-    db.session.delete(calc)
-    db.session.commit()
-    flash(f"Berechnung gelöscht.", "success")
-    return redirect(url_for("admin_dashboard"))
-
 
 @app.route("/calculation/delete/<int:calc_id>", methods=["POST"])
 @login_required
@@ -962,7 +962,6 @@ def send_reset_email(user):
 If you did not make this request then simply ignore this email and no changes will be made.
 """
     mail.send(msg)
-
 
 class ResendConfirmationForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
@@ -1207,7 +1206,7 @@ def module_page_submit(module_id):
     if module_id_str not in session["module_answers"]:
         session["module_answers"][module_id_str] = {}
 
-    # --- Store answers ---
+     # --- Store answers ---
     if module_id == 5:
         # --- Module 5: Handle parts, frequency and standard questions ---
         for part in module_data.get("parts", []):
@@ -1756,7 +1755,7 @@ def calculate_adult_pg():
             else:
                 module_scores_weighted[module_id_str] = 0.0
 
-        # --- Calculate Final Total Score ---
+         # --- Calculate Final Total Score ---
         final_total_score = 0
         which_module_contributed_m2_m3 = None
         m1_score = module_scores_weighted.get("1", 0.0)
@@ -1776,7 +1775,7 @@ def calculate_adult_pg():
         final_total_score += m4_score
         final_total_score += m5_score
         final_total_score += m6_score
-
+        
         # --- Determine Pflegegrad ---
         pflegegrad = 0
         for grad, threshold in sorted(
