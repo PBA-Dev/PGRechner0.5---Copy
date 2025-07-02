@@ -160,10 +160,9 @@
                 {# --- Standard Modules (1, 2, 3, 4, 6): Loop through questions --- #}
                 {# *** APPLY ENUMERATE HERE *** #}
                 {% for question in module.questions %}
-                    {% set question_index_str = loop.index0 | string %} {# Use index as string key #}
+                    {% set question_key = question.id %}
                     <div class="mb-4 p-3 border rounded bg-light question-block"> {# Added question-block class #}
-                        <h5>{{ question.id }}: {{ question.text }}
-                            {% if question.explanation %}
+                        <h5>{{ question_key }}: {{ question.text }}
                                 <button type="button" class="btn btn-sm btn-outline-secondary explanation-toggle-icon ms-2" onclick="toggleExplanation(this)" title="Erklärung anzeigen/verbergen"><i class="bi bi-question-circle"></i></button>
                             {% endif %}
                         </h5>
@@ -202,7 +201,7 @@
                         {% endfor %}
                         <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="toggleNotes(this)">Notizen</button>
                         <div class="notes-field hidden mt-2">
-                            <textarea class="form-control form-control-sm" rows="2" name="note_{{ module_id }}_{{ question_index_str }}" placeholder="Notizen...">{{ current_answer_data.get('notes', '') }}</textarea>
+                            <textarea class="form-control form-control-sm" rows="2" name="note_{{ module_id }}_{{ question_key }}" placeholder="Notizen...">{{ current_answer_data.get('notes', '') }}</textarea>
                         </div>
                     </div> {# End question block #}
                 {% endfor %} {# End loop questions #}
