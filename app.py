@@ -841,7 +841,7 @@ def delete_account():
     return redirect(url_for("index"))
 
 
-@app.route("/admin/user/delete/<int:user_id>", methods=["POST"])
+@app.route("/admin/user/toggle_confirmation/<int:user_id>", methods=["POST"])
 @login_required
 @admin_required
 def admin_toggle_confirmation(user_id):
@@ -856,6 +856,22 @@ def admin_toggle_confirmation(user_id):
     db.session.commit()
     return redirect(url_for("admin_dashboard"))
 
+
+@app.route("/admin/user/delete/<int:user_id>", methods=["POST"])
+@login_required
+@admin_required
+def admin_delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+    if user.id == current_user.id:
+        flash("Sie können Ihr eigenes Konto nicht löschen.", "danger")
+        return redirect(url_for("admin_dashboard"))
+    
+    # Delete all calculations associated with the user
+    Calculation.query.filter_by(user_id=user.id).delete()
+    db.session.delete(user)
+    db.session.commit()
+    flash(f"Benutzer {user.username} und alle zugehörigen Berechnungen wurden gelöscht.", "success")
+    return redirect(url_for("admin_dashboard"))
 
 @app.route("/admin/user/send_password_reset/<int:user_id>", methods=["POST"])
 @login_required
@@ -887,6 +903,16 @@ def admin_change_role(user_id, new_role):
     user.role = new_role
     db.session.commit()
     flash(f"Rolle von {user.username} zu {new_role} geändert.", "success")
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/admin/calculation/delete/<int:calc_id>", methods=["POST"])
+@login_required
+@admin_required
+def admin_delete_calculation(calc_id):
+    calc = Calculation.query.get_or_404(calc_id)
+    db.session.delete(calc)
+    db.session.commit()
+    flash("Berechnung gelöscht.", "success")
     return redirect(url_for("admin_dashboard"))
 
 @app.route("/calculation/delete/<int:calc_id>", methods=["POST"])
