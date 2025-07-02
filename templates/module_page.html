@@ -37,7 +37,7 @@
                 <div class="progress" style="height: 25px;"> 
                     {% set current_percentage = (current_estimated_score / max_score * 100) | round(1) %}
                     {% if current_percentage > 100 %}{% set current_percentage = 100 %}{% endif %}
-                    <div class="progress-bar" id="progressBar" role="progressbar" style="width: {{ current_percentage }}%;" aria-valuenow="{{ current_percentage }}" aria-valuemin="0" aria-valuemax="100">
+                         <div class="progress-bar" id="progressBar" role="progressbar" style="width: {{ current_percentage }}%;" aria-valuenow="{{ current_percentage }}" aria-valuemin="0" aria-valuemax="100" aria-labelledby="currentScoreLabel">
                          <span class="current-score-label" id="currentScoreLabel">{{ current_estimated_score | round(1) }} Pkt.*</span>
                     </div>
                 </div>

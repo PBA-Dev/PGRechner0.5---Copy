@@ -1237,15 +1237,14 @@ def module_page_submit(module_id):
         # --- Module 5: Handle parts, frequency and standard questions ---
         for part in module_data.get("parts", []):
             for question in part.get("questions", []):
-                question_key = question[
-                    "id"
-                ]  # Use the unique question ID (e.g., '5.1.1')
+                question_key = question["id"]  # Original ID
+                sanitized_key = question.get("sanitized_id", question_key)
 
                 if question.get("type") == "frequency":
-                    count_key = f"freq_count_{question_key}"
-                    unit_key = f"freq_unit_{question_key}"
+                    count_key = f"freq_count_{sanitized_key}"
+                    unit_key = f"freq_unit_{sanitized_key}"
                     answered_key = (
-                        f"answered_{question_key}"  # Check if user interacted
+                        f"answered_{sanitized_key}"  # Check if user interacted
                     )
 
                     # Only process if the hidden 'answered' field was sent
@@ -1272,7 +1271,7 @@ def module_page_submit(module_id):
                         session["module_answers"][module_id_str].pop(question_key, None)
 
                 elif question.get("type") == "standard":
-                    answer_key = f"answer_{module_id}_{question_key}"
+                    answer_key = f"answer_{module_id}_{sanitized_key}"
                     selected_option_index = request.form.get(answer_key)
                     if selected_option_index is not None:
                         try:
@@ -1301,7 +1300,7 @@ def module_page_submit(module_id):
                         session["module_answers"][module_id_str].pop(question_key, None)
 
                 else:  # Fallback/Default
-                    answer_key = f"answer_{module_id}_{question_key}"
+                    answer_key = f"answer_{module_id}_{sanitized_key}"
                     selected_option_index = request.form.get(answer_key)
                     if selected_option_index is not None:
                         try:
@@ -1344,9 +1343,10 @@ def module_page_submit(module_id):
 
     else:  # Standard handling for modules 1, 2, 3, 4, 6
         for i, question in enumerate(module_data.get("questions", [])):
-            question_key = question.get("id", str(i)) # Use 'id' if present, otherwise use index
+            question_key = question.get("id", str(i))  # Original ID
+            sanitized_key = question.get("sanitized_id", question_key)
             question_text = question.get("text", f"Unbekannte Frage {question_key}")
-            answer_key = f"answer_{module_id}_{question_key}"
+            answer_key = f"answer_{module_id}_{sanitized_key}"
             selected_option_index = request.form.get(answer_key)
 
             if selected_option_index is not None:
@@ -1536,9 +1536,9 @@ def child_module_page_submit(module_id):
                 question_key = question["id"]
 
                 if question.get("type") == "frequency":
-                    count_key = f"freq_count_{question_key}"
-                    unit_key = f"freq_unit_{question_key}"
-                    answered_key = f"answered_{question_key}"
+                    count_key = f"freq_count_{sanitized_key}"
+                    unit_key = f"freq_unit_{sanitized_key}"
+                    answered_key = f"answered_{sanitized_key}"
 
                     if answered_key in request.form:
                         count = request.form.get(count_key, 0)
@@ -1563,7 +1563,7 @@ def child_module_page_submit(module_id):
                         session["module_answers"][module_id_str].pop(question_key, None)
 
                 elif question.get("type") == "standard":
-                    answer_key = f"answer_{module_id}_{question_key}"
+                    answer_key = f"answer_{module_id}_{sanitized_key}"
                     selected_option_index = request.form.get(answer_key)
                     if selected_option_index is not None:
                         try:
@@ -1592,7 +1592,7 @@ def child_module_page_submit(module_id):
                         session["module_answers"][module_id_str].pop(question_key, None)
 
                 else:
-                    answer_key = f"answer_{module_id}_{question_key}"
+                    answer_key = f"answer_{module_id}_{sanitized_key}"
                     selected_option_index = request.form.get(answer_key)
                     if selected_option_index is not None:
                         try:
