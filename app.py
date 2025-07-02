@@ -1343,8 +1343,8 @@ def module_page_submit(module_id):
                         )
 
     else:  # Standard handling for modules 1, 2, 3, 4, 6
-        for question in module_data.get("questions", []):
-            question_key = question["id"]
+        for i, question in enumerate(module_data.get("questions", [])):
+            question_key = question.get("id", str(i)) # Use 'id' if present, otherwise use index
             question_text = question.get("text", f"Unbekannte Frage {question_key}")
             answer_key = f"answer_{module_id}_{question_key}"
             selected_option_index = request.form.get(answer_key)
