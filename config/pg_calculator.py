@@ -85,7 +85,7 @@ def calculate_child_pflegerad(
     """Calculate the total score and determine the Pflegegrad for a child."""
     raw_scores: Dict[int, float] = {}
     for question_id, score in answers.items():
-        module_id_str, _ = question_id.split(".")
+        module_id_str = question_id.split(".")[0]
         module_id = int(module_id_str)
 
         raw_scores.setdefault(module_id, 0)
