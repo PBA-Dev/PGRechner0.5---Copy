@@ -1343,12 +1343,12 @@ def module_page_submit(module_id):
                         )
 
     else:  # Standard handling for modules 1, 2, 3, 4, 6
-        for i, question in enumerate(module_data.get("questions", [])):
-            question_index_str = str(i)
-            # Use .get() for question text with a default value
-            question_text = question.get("text", f"Unbekannte Frage {i+1}")
-            answer_key = f"answer_{module_id}_{i}"
+        for question in module_data.get("questions", []):
+            question_key = question["id"]
+            question_text = question.get("text", f"Unbekannte Frage {question_key}")
+            answer_key = f"answer_{module_id}_{question_key}"
             selected_option_index = request.form.get(answer_key)
+
             if selected_option_index is not None:
                 try:
                     option_index = int(selected_option_index)
@@ -1357,7 +1357,7 @@ def module_page_submit(module_id):
                         selected_option = options[option_index]
                         if isinstance(selected_option, dict):
                             session["module_answers"][module_id_str][
-                                question_index_str
+                                question_key
                             ] = {
                                 "question": question_text,
                                 "answer_text": selected_option.get("text", "N/A"),
@@ -1367,39 +1367,39 @@ def module_page_submit(module_id):
                             }
                         else:
                             current_app.logger.error(
-                                f"Invalid option format for M{module_id} Q{i} Opt{option_index}: {selected_option}"
+                                f"Invalid option format for M{module_id} Q{question_key} Opt{option_index}: {selected_option}"
                             )
                             session["module_answers"][module_id_str].pop(
-                                question_index_str, None
+                                question_key, None
                             )
                     else:
                         session["module_answers"][module_id_str].pop(
-                            question_index_str, None
+                            question_key, None
                         )
                 except ValueError:
                     session["module_answers"][module_id_str].pop(
-                        question_index_str, None
+                        question_key, None
                     )
                 except TypeError:
                     current_app.logger.error(
-                        f"Invalid options format for M{module_id} Q{i}: {options}"
+                        f"Invalid options format for M{module_id} Q{question_key}: {options}"
                     )
                     session["module_answers"][module_id_str].pop(
-                        question_index_str, None
+                        question_key, None
                     )
             else:
-                session["module_answers"][module_id_str].pop(question_index_str, None)
+                session["module_answers"][module_id_str].pop(question_key, None)
 
             # --- Store question-specific note for standard modules ---
-            note_key = f"note_{module_id}_{question_index_str}"
+            note_key = f"note_{module_id}_{question_key}"
             note_text = request.form.get(note_key, "").strip()
             if note_text:
                 session["module_answers"][module_id_str].setdefault(
-                    question_index_str, {"question": question_text}
+                    question_key, {"question": question_text}
                 ).update({"notes": note_text})
             else:
-                if question_index_str in session["module_answers"][module_id_str]:
-                    session["module_answers"][module_id_str][question_index_str].pop(
+                if question_key in session["module_answers"][module_id_str]:
+                    session["module_answers"][module_id_str][question_key].pop(
                         "notes", None
                     )
 
