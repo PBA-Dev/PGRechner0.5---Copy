@@ -1775,7 +1775,7 @@ def calculate_adult_pg():
         final_total_score += m4_score
         final_total_score += m5_score
         final_total_score += m6_score
-        
+
         # --- Determine Pflegegrad ---
         pflegegrad = 0
         for grad, threshold in sorted(
@@ -2117,3 +2117,268 @@ def generate_pdf():
 
                 raw_score = module_scores_raw.get(module_id_str, 0.0)
                 weighted_score = module_scores_weighted.get(module_id_str, 0.0)
+
+                pdf.set_x(pdf.l_margin)
+                pdf.multi_cell(
+                    content_width, 6, f"Gewichtete Punkte: {float(weighted_score):.2f}"
+                )
+                pdf.set_x(pdf.l_margin)
+                pdf.multi_cell(
+                    content_width, 6, f"Einzelpunkte: {float(raw_score):.1f}"
+                )
+                pdf.ln(2)
+
+                if module_id in [2, 3]:
+                    note_text = "(Nicht fuer Gesamtpunktzahl beruecksichtigt)"
+                    if (
+                        which_module_contributed is not None
+                        and module_id == which_module_contributed
+                    ):
+                        note_text = "(Dieser Wert zaehlt fuer die Gesamtpunktzahl)"
+                    pdf.set_font("DejaVu", "I", 9)
+                    pdf.cell(usable_width, 5, note_text, ln=1)
+                    pdf.set_font("DejaVu", "", 11)
+
+                pdf.ln(2)
+                pdf.set_font("DejaVu", "B", 12)
+                pdf.cell(usable_width, 6, "Antworten:", ln=1)
+                pdf.set_font("DejaVu", "", 11)
+
+                if isinstance(module_answers, dict) and module_answers:
+                    try:
+                        sorted_q_keys = sorted(
+                            module_answers.keys(),
+                            key=lambda k: int(k) if k.isdigit() else float("inf"),
+                        )
+                    except ValueError:
+                        sorted_q_keys = sorted(module_answers.keys())
+
+                    for q_key in sorted_q_keys:
+                        if q_key == "notes":
+                            continue
+
+                        answer_data = module_answers[q_key]
+                        if isinstance(answer_data, dict):
+                            q_text = answer_data.get("question", f"Frage {q_key}")
+                            a_text = answer_data.get("answer_text", "N/A")
+                            a_score = answer_data.get("score", "N/A")
+
+                            question_id = None
+                            if q_key.isdigit():
+                                questions = module_info.get("questions", [])
+                                idx = int(q_key)
+                                if idx < len(questions):
+                                    question_id = questions[idx].get("id")
+                            module_text = (
+                                f"{question_id} {q_text}" if question_id else q_text
+                            )
+
+                            if answer_data.get("type") == "frequency":
+                                count = answer_data.get("count", "N/A")
+                                unit = answer_data.get("unit", "N/A")
+                                a_text = f"{count} mal pro {unit}"
+
+                            check_page_break(pdf, 10)
+                            pdf.set_font("DejaVu", "B", 10)
+                            pdf.multi_cell(content_width, 5, module_text)
+                            pdf.ln(1)
+                            pdf.set_font("DejaVu", "", 10)
+                            pdf.multi_cell(
+                                content_width,
+                                5,
+                                f"Antwort: {a_text} (Punkte: {a_score})",
+                            )
+                            if answer_data.get("notes"):
+                                pdf.set_font("DejaVu", "I", 9)
+                                pdf.multi_cell(
+                                    content_width,
+                                    5,
+                                    f"Notiz: {answer_data.get('notes')}",
+                                )
+                                pdf.set_font("DejaVu", "", 10)
+                            pdf.ln(2)
+                        elif isinstance(answer_data, str):
+                            # Handle answer as plain string (fallback)
+                            check_page_break(pdf, 10)
+                            pdf.set_font("DejaVu", "B", 10)
+                            pdf.multi_cell(content_width, 5, f"Frage {q_key}")
+                            pdf.ln(1)
+                            pdf.set_font("DejaVu", "", 10)
+                            pdf.multi_cell(content_width, 5, f"Antwort: {answer_data}")
+                            pdf.ln(2)
+
+                module_notes = module_answers.get("notes", "")
+                if module_notes:
+                    pdf.ln(2)
+                    pdf.set_font("DejaVu", "B", 11)
+                    pdf.multi_cell(usable_width, 6, "Notizen zum Modul:")
+                    pdf.set_font("DejaVu", "", 10)
+                    pdf.multi_cell(usable_width, 5, module_notes)
+                    pdf.ln(2)
+
+        # --- Aggregated Notes Section ---
+        if notes_data:
+            pdf.add_page()
+            pdf.set_font("DejaVu", "B", 14)
+            pdf.cell(usable_width, 10, "Zusätzliche Notizen", ln=1)
+            pdf.set_font("DejaVu", "", 11)
+            pdf.ln(5)
+
+            sorted_notes_keys = sorted(
+                notes_data.keys(), key=lambda k: int(k) if k.isdigit() else 999
+            )
+
+            for module_id_str in sorted_notes_keys:
+                if not module_id_str.isdigit():
+                    continue
+                module_id = int(module_id_str)
+                module_info = modules_to_use.get(module_id)
+                if not module_info:
+                    continue
+
+                note_text = notes_data[module_id_str]
+                if note_text:
+                    module_name = module_info.get("name", f"Modul {module_id}")
+                    check_page_break(pdf, 10)
+                    pdf.set_font("DejaVu", "B", 12)
+                    pdf.multi_cell(usable_width, 6, f"Modul {module_id}: {module_name}")
+                    pdf.set_font("DejaVu", "", 10)
+                    pdf.multi_cell(usable_width, 5, note_text)
+                    pdf.ln(3)
+
+        # --- Benefits Summary at End ---
+        if benefits_periods:
+            pdf.add_page()
+            pdf.set_font("DejaVu", "B", 14)
+            pdf.cell(
+                usable_width,
+                10,
+                f"Wichtige Leistungen bei Pflegegrad {pflegegrad}",
+                ln=1,
+            )
+            pdf.ln(5)
+
+            # Each period gets its own page now
+            for idx, period in enumerate(benefits_periods):
+                # Add a new page for the second period and onwards
+                if idx > 0:
+                    pdf.add_page()
+                    pdf.set_font("DejaVu", "B", 12)
+                    pdf.cell(
+                        usable_width,
+                        10,
+                        f"Wichtige Leistungen bei Pflegegrad {pflegegrad} (Fortsetzung)",
+                        ln=1,
+                    )
+                    pdf.ln(3)
+
+                # Use full width since we have one period per page
+                col_width = usable_width
+                start_y = pdf.get_y()
+                start_x = pdf.l_margin
+
+                x = start_x
+                y = start_y
+                pdf.set_xy(x, y)
+                pdf.set_font("DejaVu", "B", 11)
+                date_range = period.get("date_range", "")
+                if date_range:
+                    check_page_break(pdf, 8)
+                    y = pdf.get_y()
+                    pdf.set_xy(x, y)
+                    pdf.multi_cell(col_width, 8, date_range)
+                    y = pdf.get_y()
+                    pdf.ln(3)  # Extra space after date range
+                    y = pdf.get_y()
+
+                pdf.set_font("DejaVu", "", 12)
+                for item in period.get("leistungen", []):
+                    item_name = item.get("name", "")
+                    item_value = item.get("value", "")
+                    pdf.set_xy(x, y)
+                    check_page_break(pdf, 8)
+                    y = pdf.get_y()
+                    pdf.set_xy(x, y)
+                    pdf.multi_cell(col_width, 8, f"- {item_name}: {item_value}")
+                    y = pdf.get_y()
+                    pdf.ln(2)  # Extra space between benefit items
+                    y = pdf.get_y()
+
+                pdf.set_y(y + 8)
+
+        pdf_output = pdf.output(dest="S")
+        if not isinstance(pdf_output, (bytes, bytearray)):
+            pdf_output = pdf_output.encode("latin-1")
+        else:
+            pdf_output = bytes(pdf_output)
+
+        # Determine filename using client name if available
+        client_name = user_info.get("client_name", "").strip()
+        if client_name:
+            safe_name = secure_filename(client_name)
+            filename = f"pflegegrad_report_{safe_name}.pdf"
+        else:
+            filename = "pflegegrad_report.pdf"
+
+        # Return PDF as response
+        response = make_response(pdf_output)
+        response.headers.set("Content-Type", "application/pdf")
+        response.headers.set("Content-Disposition", "attachment", filename=filename)
+        return response
+
+    except Exception as e:
+        current_app.logger.error(f"Error generating PDF: {e}", exc_info=True)
+        return jsonify({"error": "Failed to generate PDF."}), 500
+
+
+@app.errorhandler(404)
+def handle_404(error):
+    """Return a friendly 404 page and log the missing path."""
+    current_app.logger.warning(f"404 Not Found: {request.path}")
+    return render_template("404.html"), 404
+
+
+@app.errorhandler(500)
+def handle_500(error):
+    """Return a generic 500 page while logging the exception."""
+    app.logger.error(f"Server Error: {error}", exc_info=True)
+    return render_template("500.html"), 500
+
+
+# --- Application Initialization ---
+# This block runs when the application starts.
+# It creates database tables and the initial admin user if they don't exist.
+try:
+    with app.app_context():
+        db.create_all()
+        # Check for and create admin user from .env
+        admin_user = os.environ.get("ADMIN_USER")
+        admin_email = os.environ.get("ADMIN_EMAIL")
+        admin_password = os.environ.get("ADMIN_PASSWORD")
+
+        if admin_user and admin_email and admin_password:
+            # Check if admin already exists
+            existing_admin = User.query.filter(
+                (User.username == admin_user) | (User.email == admin_email)
+            ).first()
+            if not existing_admin:
+                hashed_password = generate_password_hash(admin_password)
+                new_admin = User(
+                    username=admin_user,
+                    email=admin_email,
+                    password_hash=hashed_password,
+                    name="Admin",
+                    vorname="User",
+                    gdpr_consent=True,  # Implied consent for admin
+                    role="admin",
+                )
+                db.session.add(new_admin)
+                db.session.commit()
+                app.logger.info(f"Admin user '{admin_user}' created.")
+        app.logger.info("Database tables created/checked successfully.")
+except Exception as e:
+    app.logger.error(f"Error during database initialization: {e}")
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5001, debug=True)
