@@ -1879,12 +1879,41 @@ def calculate_child_pg():
                 flat_answers[f"{module_id_str}.{question_key}"] = answer_data.get("score", 0)
 
     # Calculate Pflegegrad using the new function
-    results = calculate_child_pflegerad(flat_answers, age_in_months)
+    pg_results = calculate_child_pflegerad(flat_answers, age_in_months)
+
+    module_scores_raw = {}
+    module_scores_weighted = {}
+    for module_id_str, answers in all_answers.items():
+        module_id = int(module_id_str)
+        current_module_raw_score = 0.0
+        for q_key, answer_data in answers.items():
+            if q_key not in ["notes", "visited"] and isinstance(answer_data, dict):
+                current_module_raw_score += answer_data.get("score", 0)
+        module_scores_raw[module_id_str] = current_module_raw_score
+        
+        # For child modules, weighted scores are calculated differently
+        # This part needs to be aligned with how child_weighted_score_mapping_tables is used
+        # For now, we'll just use the raw score as weighted if no specific child weighted mapping is applied here
+        age_group = "0-18" # Default, will be determined by map_child_raw_to_weighted_score
+        if age_in_months <= 18:
+            age_group = "0-18"
+        elif age_in_months <= 132:
+            age_group = "18-132"
+        else:
+            age_group = "132-216"
+        module_scores_weighted[module_id_str] = map_child_raw_to_weighted_score(module_id, current_module_raw_score, age_group)
+
 
     # --- Prepare results for template ---
-    # You might need to adjust this part based on what the results page expects
-    results["user_info"] = session.get("user_info", {})
-    results["answers"] = all_answers
+    results = {
+        "final_total_score": pg_results["total_score"],
+        "pflegegrad": pg_results["pflegegrad"],
+        "module_scores_raw": module_scores_raw,
+        "module_scores_weighted": module_scores_weighted,
+        "user_info": session.get("user_info", {}),
+        "answers": all_answers,
+        "is_child_calculation": True,
+    }
 
     # Store results in session
     session['results'] = results
