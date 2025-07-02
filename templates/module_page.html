@@ -160,13 +160,17 @@
                 {# --- Standard Modules (1, 2, 3, 4, 6): Loop through questions --- #}
                 {# *** APPLY ENUMERATE HERE *** #}
                 {% for question in module.questions %}
-                    {% set question_key = question.id %}
+                    {% set question_key = question.id if question.id is defined else loop.index0 %}
                     <div class="mb-4 p-3 border rounded bg-light question-block"> {# Added question-block class #}
                         <h5>{{ question_key }}: {{ question.text }}
-                                <button type="button" class="btn btn-sm btn-outline-secondary explanation-toggle-icon ms-2" onclick="toggleExplanation(this)" title="Erklärung anzeigen/verbergen"><i class="bi bi-question-circle"></i></button>
+                                {% if question.explanation %}
+                                <button type="button" class="btn btn-sm btn-outline-secondary explanation-toggle-icon ms-2"
+                                        onclick="toggleExplanation(this)" title="Erklärung anzeigen/verbergen">
+                                    <i class="bi bi-question-circle"></i>
+                                </button>
                             {% endif %}
                         </h5>
-                         {% if question.explanation %}
+                        {% if question.explanation %}
                         <div class="explanation hidden mt-2 small text-muted">
                             {{ question.explanation }}
                             {# Optionally add option explanations here if needed, like in your original code #}
@@ -175,7 +179,7 @@
 
                         {# Pre-select answer based on session data using index #}
                         {# Ensure current_answers is passed from the GET route #}
-                        {% set current_answer_data = current_answers.get(question_index_str, {}) %}
+                        {% set current_answer_data = current_answers.get(question_key, {}) %}
                         {% set current_answer_index = current_answer_data.get('option_index') %}
 
                         {# *** APPLY ENUMERATE HERE TOO *** #}
@@ -183,15 +187,15 @@
                             {% set opt_idx = loop.index0 %}
                             <div class="form-check">
                                 <input class="form-check-input" type="radio"
-                                       name="answer_{{ module_id }}_{{ question_index_str }}"
-                                       id="option_{{ module_id }}_{{ question_index_str }}_{{ opt_idx }}"
+                                       name="answer_{{ module_id }}_{{ question_key }}"
+                                       id="option_{{ module_id }}_{{ question_key }}_{{ opt_idx }}"
                                        value="{{ opt_idx }}"
                                        data-score="{{ option.score if option.score is defined else 0 }}"
                                        data-module-id="{{ module_id }}"
                                        data-question-id="{{ question.id }}"
                                        {% if current_answer_index is not none and current_answer_index == opt_idx %}checked{% endif %}
                                        required> 
-                                <label class="form-check-label" for="option_{{ module_id }}_{{ question_index_str }}_{{ opt_idx }}">
+                                <label class="form-check-label" for="option_{{ module_id }}_{{ question_key }}_{{ opt_idx }}">
                                     {{ option.text }}
                                 {% if option.option_explanation %}
                                     <button type="button" class="btn btn-sm btn-outline-secondary info-toggle-icon" onclick="toggleOptionInfo(this)" title="Info anzeigen/verbergen"><i class="bi bi-info-circle"></i></button>
