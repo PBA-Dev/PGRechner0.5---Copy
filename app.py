@@ -1091,7 +1091,7 @@ def start():
         today = date.today()
         age_in_months = (today.year - dob_date.year) * 12 + today.month - dob_date.month
     else:
-        age_in_months = float('inf') # Default to adult if DOB is invalid
+        age_in_months = 9999  # Default to adult if DOB is invalid
 
     session["age_in_months"] = age_in_months
     session["user_info"] = {
@@ -1103,7 +1103,7 @@ def start():
         "phone": request.form.get("phone", "").strip(),
     }
 
-    age_in_months = session.get("age_in_months", float('inf'))
+    age_in_months = session.get("age_in_months", 9999)
     if age_in_months < 216: # 18 years * 12 months
         return redirect(url_for("child_module_page", module_id=1))
     else:
@@ -1711,7 +1711,7 @@ def child_module_page_submit(module_id):
 # --- Update calculate function ---
 @app.route("/calculate")
 def calculate():
-    age_in_months = session.get("age_in_months", float('inf'))
+    age_in_months = session.get("age_in_months", 9999)
     if age_in_months < 216:
         return calculate_child_pg()
     else:
