@@ -49,7 +49,8 @@
 
         <h1>{{ module.name }} (Modul {{ module_id }} von {{ TOTAL_MODULES }}) - {{ age_group_label }}</h1> {# Use module_id and TOTAL_MODULES #}
 
-        <form method="post" action="{{ url_for('module_page_submit', module_id=module_id) }}"> {# Use module_id #}
+        <form method="post"
+              action="{{ url_for('child_module_page_submit' if is_child_module else 'module_page_submit', module_id=module_id) }}"> 
 
             {# --- Loop through questions or parts --- #}
             {% if module.id == 5 %}
